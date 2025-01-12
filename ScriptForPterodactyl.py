@@ -64,8 +64,8 @@ def get_disk_usage(disk_limit_mb):
 
 def delete_files():
     files_to_delete = [
-        "TTSHubProxy/voices_cache.ldb",
-        "TTSHubProxy/voices-cache-log.ldb"
+        "TTSHubProxy/voices_cache-log.ldb",
+        "TTSHubProxy/voices_cache.ldb"
     ]
 
     try:
@@ -79,7 +79,6 @@ def delete_files():
 
         logger.info("Запускаем сервер...")
         api.client.servers.send_power_action(srv_id, "start")
-        time.sleep(10)
         logger.info("Сервер успешно запущен")
     except Exception as e:
         logger.exception(f"Ошибка при выполнении операции с сервером: {e}")
