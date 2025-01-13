@@ -105,6 +105,7 @@ def start_scheduler():
 
     scheduler.start()
     logger.info("Планировщик включен. Проверка диска будет выполняться каждый час")
+    check_disk_usage()
 
     try:
         while True:
