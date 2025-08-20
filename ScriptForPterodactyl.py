@@ -63,18 +63,15 @@ def get_disk_usage(disk_limit_mb):
 
 
 def delete_files():
-    files_to_delete = [
-        "TTSHubProxy/voices_cache-log.ldb",
-        "TTSHubProxy/voices_cache.ldb"
-    ]
+    folder_to_delete = "TTSHubProxy/tts-cache"
 
     try:
         logger.info("Останавливаем сервер...")
         api.client.servers.send_power_action(srv_id, "stop")
         time.sleep(10)
-        
-        api.client.servers.files.delete_files(srv_id, files_to_delete)
-        logger.info(f"Файлы {', '.join(files_to_delete)} успешно удалены")
+
+        api.client.servers.files.delete_directory(srv_id, folder_to_delete)
+        logger.info(f"Папка {folder_to_delete} успешно удалена")
         time.sleep(10)
 
         logger.info("Запускаем сервер...")
