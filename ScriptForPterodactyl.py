@@ -70,7 +70,7 @@ def delete_files():
         api.client.servers.send_power_action(srv_id, "stop")
         time.sleep(10)
 
-        api.client.servers.files.delete_directory(srv_id, folder_to_delete)
+        api.client.servers.files.delete_file(srv_id, folder_to_delete)
         logger.info(f"Папка {folder_to_delete} успешно удалена")
         time.sleep(10)
 
