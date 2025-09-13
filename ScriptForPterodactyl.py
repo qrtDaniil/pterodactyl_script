@@ -65,15 +65,42 @@ def get_disk_usage(disk_limit_mb):
 def delete_files():
     folder_to_delete = "TTSHubProxy/tts-cache"
 
+    def delete_folder_recursive(server_id, path):
+        try:
+            files = api.client.servers.files.list_files(server_id, path)
+
+            for f in files["data"]:
+                name = f["attributes"]["name"]
+                is_file = f["attributes"]["is_file"]
+                full_path = f"{path}/{name}" if path else name
+
+                if is_file:
+                    try:
+                        api.client.servers.files.delete_files(server_id, [full_path])
+                        logger.info(f"Файл {full_path} удалён")
+                    except Exception as e:
+                        logger.error(f"Ошибка при удалении файла {full_path}: {e}")
+                else:
+                    delete_folder_recursive(server_id, full_path)
+
+            if path:
+                try:
+                    api.client.servers.files.delete_files(server_id, [path])
+                    logger.info(f"Папка {path} удалена")
+                except Exception as e:
+                    logger.error(f"Ошибка при удалении папки {path}: {e}")
+
+        except Exception as e:
+            logger.error(f"Ошибка при получении содержимого {path}: {e}")
+
     try:
         logger.info("Останавливаем сервер...")
         api.client.servers.send_power_action(srv_id, "stop")
         time.sleep(10)
 
-        api.client.servers.files.delete_files(srv_id, [folder_to_delete])
-        logger.info(f"Папка {folder_to_delete} успешно удалена")
-        time.sleep(10)
+        delete_folder_recursive(srv_id, folder_to_delete)
 
+        time.sleep(10)
         logger.info("Запускаем сервер...")
         api.client.servers.send_power_action(srv_id, "start")
         logger.info("Сервер успешно запущен")
